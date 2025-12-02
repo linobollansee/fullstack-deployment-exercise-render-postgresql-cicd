@@ -22,7 +22,7 @@ function App() {
   const fetchQuotes = async () => {
     try {
       setLoading(true);
-      const response = await fetch("/api/quotes");
+      const response = await fetch("/quotes");
       if (!response.ok) throw new Error("Failed to fetch quotes");
       const data = await response.json();
       setQuotes(data);
@@ -39,7 +39,7 @@ function App() {
     if (!newQuote.text || !newQuote.author) return;
 
     try {
-      const response = await fetch("/api/quotes", {
+      const response = await fetch("/quotes", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newQuote),
@@ -54,7 +54,7 @@ function App() {
 
   const handleDelete = async (id: number) => {
     try {
-      const response = await fetch(`/api/quotes/${id}`, { method: "DELETE" });
+      const response = await fetch(`/quotes/${id}`, { method: "DELETE" });
       if (!response.ok) throw new Error("Failed to delete quote");
       fetchQuotes();
     } catch (err) {

@@ -31,14 +31,21 @@ import { User } from "./users/entities/user.entity";
     // Configure TypeORM database connection
     // TypeORM-Datenbankverbindung konfigurieren
     TypeOrmModule.forRoot({
-      // type: Database type - using SQLite
-      // type: Datenbanktyp - verwendet SQLite
-      type: "better-sqlite3",
+      // type: Database type - using PostgreSQL
+      // type: Datenbanktyp - verwendet PostgreSQL
+      type: "postgres",
 
-      // database: Name of the SQLite database file
-      // database: Name der SQLite-Datenbankdatei
-      database: "quote-api.db",
+      // url: Database connection string from environment variable
+      // url: Datenbank-Verbindungszeichenfolge aus Umgebungsvariable
+      url: process.env.DATABASE_URL,
 
+      // ssl: SSL/TLS configuration for secure database connection
+      // ssl: SSL/TLS-Konfiguration für sichere Datenbankverbindung
+      ssl: {
+        // rejectUnauthorized: Accept self-signed certificates (needed for some cloud providers)
+        // rejectUnauthorized: Selbstsignierte Zertifikate akzeptieren (erforderlich für einige Cloud-Anbieter)
+        rejectUnauthorized: false,
+      },
       // entities: List of entities (database tables) to use
       // entities: Liste der zu verwendenden Entities (Datenbanktabellen)
       entities: [Quote, User],

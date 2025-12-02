@@ -1,0 +1,161 @@
+### Quote API Tests
+@baseUrl = http://localhost:3000
+
+###################
+### QUOTES API ###
+###################
+
+### 1. GET all quotes
+GET {{baseUrl}}/quotes
+
+### 2. GET quote by ID
+GET {{baseUrl}}/quotes/1
+
+### 3. GET with limit parameter
+GET {{baseUrl}}/quotes?limit=1
+
+### 4. GET with author filter
+GET {{baseUrl}}/quotes?author=Oscar
+
+### 5. GET with multiple parameters
+GET {{baseUrl}}/quotes?author=Steve&limit=1
+
+### 6. POST create new quote
+POST {{baseUrl}}/quotes
+Content-Type: application/json
+
+{
+  "text": "The future belongs to those who believe in the beauty of their dreams.",
+  "author": "Eleanor Roosevelt"
+}
+
+### 7. POST create another quote
+POST {{baseUrl}}/quotes
+Content-Type: application/json
+
+{
+  "text": "Life is what happens when you are busy making other plans.",
+  "author": "John Lennon"
+}
+
+### 8. PUT update quote (change ID as needed)
+PUT {{baseUrl}}/quotes/3
+Content-Type: application/json
+
+{
+  "text": "Updated: Dreams are the future!"
+}
+
+### 9. PUT update quote author only
+PUT {{baseUrl}}/quotes/3
+Content-Type: application/json
+
+{
+  "author": "Anonymous"
+}
+
+### 10. DELETE quote (change ID as needed)
+DELETE {{baseUrl}}/quotes/3
+
+#################
+### USERS API ###
+#################
+
+### 11. POST create user
+POST {{baseUrl}}/users
+Content-Type: application/json
+
+{
+  "email": "alice@example.com",
+  "password": "password123"
+}
+
+### 12. POST create another user
+POST {{baseUrl}}/users
+Content-Type: application/json
+
+{
+  "email": "bob@example.com",
+  "password": "securepass456"
+}
+
+### 13. GET all users
+GET {{baseUrl}}/users
+
+### 14. GET user by ID
+GET {{baseUrl}}/users/1
+
+### 15. GET users with limit
+GET {{baseUrl}}/users?limit=1
+
+### 16. PUT update user email
+PUT {{baseUrl}}/users/1
+Content-Type: application/json
+
+{
+  "email": "alice.updated@example.com"
+}
+
+### 17. PUT update user password
+PUT {{baseUrl}}/users/1
+Content-Type: application/json
+
+{
+  "password": "newpassword123"
+}
+
+### 18. DELETE user (change ID as needed)
+DELETE {{baseUrl}}/users/2
+
+###########################
+### VALIDATION TESTS ###
+###########################
+
+### 19. Test validation - missing required field (author)
+POST {{baseUrl}}/quotes
+Content-Type: application/json
+
+{
+  "text": "Quote without author"
+}
+
+### 20. Test validation - missing required field (text)
+POST {{baseUrl}}/quotes
+Content-Type: application/json
+
+{
+  "author": "Unknown Author"
+}
+
+### 21. Test validation - invalid email format
+POST {{baseUrl}}/users
+Content-Type: application/json
+
+{
+  "email": "not-an-email",
+  "password": "password123"
+}
+
+### 22. Test validation - password too short
+POST {{baseUrl}}/users
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "123"
+}
+
+### 23. Test duplicate email prevention
+POST {{baseUrl}}/users
+Content-Type: application/json
+
+{
+  "email": "alice@example.com",
+  "password": "password123"
+}
+
+### 24. Test invalid quote ID (not found)
+GET {{baseUrl}}/quotes/999
+
+### 25. Test invalid user ID (not found)
+GET {{baseUrl}}/users/999

@@ -1,10 +1,19 @@
 # Fullstack Deployment Exercise: Render + PostgreSQL + CI/CD
 
-A comprehensive guide to deploying a NestJS application to Render with PostgreSQL database and automated CI/CD using GitHub Actions.
+A comprehensive guide to deploying a fullstack NestJS + React application to Render with PostgreSQL database and automated CI/CD using GitHub Actions.
+
+This application includes:
+
+- **Backend**: NestJS REST API with TypeORM
+- **Frontend**: React TypeScript application with Vite
+- **Database**: PostgreSQL
+- **Deployment**: Dockerized multi-stage build
+- **CI/CD**: Automated GitHub Actions pipeline
 
 ## Table of Contents
 
 - [Prerequisites](#prerequisites)
+- [Local Development](#local-development)
 - [Step 1: Push Your Code to GitHub](#step-1-push-your-code-to-github)
 - [Step 2: Create and Push Docker Image to Docker Hub](#step-2-create-and-push-docker-image-to-docker-hub)
 - [Step 3: Deploy on Render](#step-3-deploy-on-render)
@@ -25,6 +34,75 @@ Before you begin, make sure you have:
 - Git installed on your computer
 - Docker installed on your computer
 - Node.js installed (v18 or higher)
+
+---
+
+## Local Development
+
+### Setup
+
+1. **Clone the repository** (or use your existing project):
+
+   ```powershell
+   git clone <your-repo-url>
+   cd fullstack-deployment-exercise-render-postgresql-cicd
+   ```
+
+2. **Install backend dependencies**:
+
+   ```powershell
+   npm install
+   ```
+
+3. **Install frontend dependencies**:
+
+   ```powershell
+   cd frontend
+   npm install
+   cd ..
+   ```
+
+4. **Create a `.env` file** (copy from `.env.example`):
+
+   ```powershell
+   copy .env.example .env
+   ```
+
+   Update the `DATABASE_URL` with your PostgreSQL connection string.
+
+### Running Locally
+
+**Option 1: Run backend and frontend separately (recommended for development)**
+
+Terminal 1 - Backend:
+
+```powershell
+npm run start:dev
+```
+
+Terminal 2 - Frontend:
+
+```powershell
+cd frontend
+npm run dev
+```
+
+The frontend will be available at `http://localhost:5173` and will proxy API requests to the backend at `http://localhost:3000`.
+
+**Option 2: Run as production (serve frontend from backend)**
+
+```powershell
+# Build frontend
+cd frontend
+npm run build
+cd ..
+
+# Build and start backend
+npm run build
+npm start
+```
+
+Visit `http://localhost:3000` to see the application.
 
 ---
 
@@ -67,35 +145,15 @@ git push -u origin main
 
 ## Step 2: Create and Push Docker Image to Docker Hub
 
-### 2.1 Create a Dockerfile
+### 2.1 Dockerfile
 
-Create a file named `Dockerfile` in your project root:
+The project includes a multi-stage Dockerfile that:
 
-```dockerfile
-# Use Node.js 20 as base image
-FROM node:20-alpine
+1. Builds the React frontend
+2. Builds the NestJS backend
+3. Creates a production image with both frontend and backend
 
-# Set working directory
-WORKDIR /app
-
-# Copy package files
-COPY package*.json ./
-
-# Install dependencies
-RUN npm ci --only=production
-
-# Copy application code
-COPY . .
-
-# Build the NestJS application
-RUN npm run build
-
-# Expose port 3000
-EXPOSE 3000
-
-# Start the application
-CMD ["node", "dist/main"]
-```
+The Dockerfile is already configured in your project root.
 
 ### 2.2 Create a .dockerignore File
 
@@ -109,6 +167,8 @@ npm-debug.log
 README.md
 .env
 dist
+frontend/node_modules
+frontend/dist
 ```
 
 ### 2.3 Build and Push to Docker Hub
@@ -368,9 +428,23 @@ Then:
 
 ## Testing Your Deployment
 
+### Test the React Frontend
+
+Visit your Render URL in a browser:
+
+```
+https://your-app.onrender.com
+```
+
+You should see the React application with:
+
+- A form to add new quotes
+- A list of all quotes
+- Delete buttons for each quote
+
 ### Test Endpoints with HTTP Requests
 
-Use the `api-tests.http` file or tools like Postman to test:
+Use the `api-tests.http` file or tools like Postman to test the API directly:
 
 **Get all quotes:**
 

@@ -6,6 +6,14 @@ import { Module } from "@nestjs/common";
 // TypeOrmModule importieren - stellt Datenbankfunktionalität bereit
 import { TypeOrmModule } from "@nestjs/typeorm";
 
+// Import ServeStaticModule - serves static files
+// ServeStaticModule importieren - stellt statische Dateien bereit
+import { ServeStaticModule } from "@nestjs/serve-static";
+
+// Import join function to create file paths
+// join-Funktion zum Erstellen von Dateipfaden importieren
+import { join } from "path";
+
 // Import QuotesModule - handles all quote-related functionality
 // QuotesModule importieren - behandelt alle zitatbezogenen Funktionen
 import { QuotesModule } from "./quotes/quotes.module";
@@ -28,6 +36,17 @@ import { User } from "./users/entities/user.entity";
   // imports: Array of modules this module depends on
   // imports: Array von Modulen, von denen dieses Modul abhängt
   imports: [
+    // Configure ServeStaticModule to serve React frontend
+    // ServeStaticModule konfigurieren, um React-Frontend bereitzustellen
+    ServeStaticModule.forRoot({
+      // rootPath: Path to the directory containing static files (React build)
+      // rootPath: Pfad zum Verzeichnis mit statischen Dateien (React-Build)
+      rootPath: join(__dirname, "..", "frontend", "dist"),
+      // exclude: Don't serve static files for API routes
+      // exclude: Keine statischen Dateien für API-Routen bereitstellen
+      exclude: ["/quotes*", "/users*"],
+    }),
+
     // Configure TypeORM database connection
     // TypeORM-Datenbankverbindung konfigurieren
     TypeOrmModule.forRoot({

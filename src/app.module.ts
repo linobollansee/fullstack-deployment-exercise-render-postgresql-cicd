@@ -2,6 +2,10 @@
 // Module-Dekorator importieren - markiert diese Klasse als NestJS-Modul
 import { Module } from "@nestjs/common";
 
+// Import ConfigModule - loads environment variables from .env file
+// ConfigModule importieren - lädt Umgebungsvariablen aus .env-Datei
+import { ConfigModule } from "@nestjs/config";
+
 // Import TypeOrmModule - provides database functionality
 // TypeOrmModule importieren - stellt Datenbankfunktionalität bereit
 import { TypeOrmModule } from "@nestjs/typeorm";
@@ -36,15 +40,21 @@ import { User } from "./users/entities/user.entity";
   // imports: Array of modules this module depends on
   // imports: Array von Modulen, von denen dieses Modul abhängt
   imports: [
+    // Configure ConfigModule to load .env file
+    // ConfigModule konfigurieren, um .env-Datei zu laden
+    ConfigModule.forRoot({
+      isGlobal: true, // Makes ConfigModule available everywhere
+    }),
+
     // Configure ServeStaticModule to serve React frontend
     // ServeStaticModule konfigurieren, um React-Frontend bereitzustellen
     ServeStaticModule.forRoot({
       // rootPath: Path to the directory containing static files (React build)
       // rootPath: Pfad zum Verzeichnis mit statischen Dateien (React-Build)
       rootPath: join(__dirname, "..", "frontend", "dist"),
-      // exclude: Don't serve static files for API routes
-      // exclude: Keine statischen Dateien für API-Routen bereitstellen
-      exclude: ["/quotes*", "/users*"],
+      // serveRoot: Serve frontend from root path
+      // serveRoot: Frontend vom Root-Pfad bereitstellen
+      serveRoot: "/",
     }),
 
     // Configure TypeORM database connection
@@ -65,6 +75,15 @@ import { User } from "./users/entities/user.entity";
         // rejectUnauthorized: Selbstsignierte Zertifikate akzeptieren (erforderlich für einige Cloud-Anbieter)
         rejectUnauthorized: false,
       },
+
+      // extra: Additional driver-specific connection options
+      // extra: Zusätzliche treiberspezifische Verbindungsoptionen
+      extra: {
+        ssl: {
+          rejectUnauthorized: false,
+        },
+      },
+
       // entities: List of entities (database tables) to use
       // entities: Liste der zu verwendenden Entities (Datenbanktabellen)
       entities: [Quote, User],
